@@ -3,7 +3,6 @@
 namespace App\Filament\Resources\Blog;
 
 use App\Filament\Resources\Blog\PostResource\Pages;
-use App\Filament\Resources\Blog\PostResource\RelationManagers;
 use App\Models\Post;
 use Filament\Forms;
 use Filament\Forms\Components\SpatieTagsInput;
@@ -11,8 +10,6 @@ use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Str;
 
 class PostResource extends Resource
@@ -30,7 +27,6 @@ class PostResource extends Resource
                         Forms\Components\Section::make()
                             ->schema([
                                 Forms\Components\TextInput::make('title')
-                                    ->label('Title')
                                     ->required()
                                     ->live(onBlur: true)
                                     ->placeholder('Enter the title of the post')
@@ -41,6 +37,9 @@ class PostResource extends Resource
                                     ->dehydrated()
                                     ->required()
                                     ->unique(Post::class, 'slug', ignoreRecord: true),
+
+                                Forms\Components\TextInput::make('description')
+                                    ->required(),
 
                                 Forms\Components\MarkdownEditor::make('content')
                                     ->required()
@@ -111,6 +110,7 @@ class PostResource extends Resource
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
+                Tables\Actions\DeleteAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
